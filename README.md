@@ -1,8 +1,7 @@
 # json-roomeditor
 
-Design rooms in a 12x20 grid with an intuitive web interface. Ideal for game developers or hobbyists looking to visually define various tile types within a grid environment.
+Design rooms in a 12x20 grid with an intuitive web interface..
 
-![Sample Application Interface](url_to_image_of_your_application_interface)
 
 ## 🌟 Features
 
