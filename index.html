@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>12x20 Grid Input</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="input-container">
+    <label for="roomId">Room ID:</label>
+    <input type="text" id="roomId" placeholder="Enter room ID">
+</div>
+
+<div class="sidebar">
+    <h3>Select Tile Type:</h3>
+    <select id="tileType" onchange="showEnemyOptions()">
+        <option value="wall">Wall</option>
+        <option value="enemy">Enemy</option>
+        <option value="npc">NPC</option>
+        <option value="chest">Chest</option>
+        <option value="Empty">Empty</option>
+        <option value="transition">Transition Tile</option>
+    </select>
+    <div id="enemyOptions" style="display: none;">
+        <div>
+            <label for="enemyId">Enemy ID:</label>
+            <input type="text" id="enemyId" placeholder="Enter enemy ID">
+        </div>
+        <div>
+            <label for="blocked">Blocked:</label>
+            <input type="checkbox" id="blocked">
+        </div>
+    </div>
+    <div id="chestOptions" style="display: none;">
+        <div>
+            <label for="chestId">Chest ID:</label>
+            <input type="text" id="chestId" placeholder="Enter chest ID">
+        </div>
+        <div>
+            <label for="blocked">Blocked:</label>
+            <input type="checkbox" id="blocked">
+        </div>
+    </div>
+    <div id="npcOptions" style="display: none;">
+        <div>
+            <label for="npcId">NPC ID:</label>
+            <input type="text" id="npcId" placeholder="Enter npc ID">
+        </div>
+        <div>
+            <label for="blocked">Blocked:</label>
+            <input type="checkbox" id="blocked">
+        </div>
+    </div>
+    <div id="transitionOptions" style="display: none;">
+        <div>
+            <label for="destination">Destination ID:</label>
+            <input type="text" id="destination" placeholder="Enter room ID">
+        </div>
+        <div>
+            <label for="destinationX">Destination X:</label>
+            <input type="text" id="destinationX" placeholder="Enter x">
+        </div>
+        <div>
+            <label for="destinationY">Destination Y:</label>
+            <input type="text" id="destinationY" placeholder="Enter y">
+        </div>
+    </div>
+</div>
+
+<table>
+    <tbody id="gridTable">
+        <!-- Rows and cells will be generated here -->
+    </tbody>
+</table>
+
+
+<button onclick="exportToJson()">Export to JSON</button>
+
+<script src="script.js"></script>
+</body>
+</html>

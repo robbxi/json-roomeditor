@@ -1,0 +1,45 @@
+.sidebar {
+    float: left;
+    padding: 20px;
+    border-right: 1px solid #ccc;
+}
+
+body {
+    background-color: #444450; /* This is a very dark blue */
+    /* ... any other styles you want for the body ... */
+}
+
+table {
+    table-layout: fixed;
+    width: 600px; /* 20 columns x 30px */
+    
+    
+    
+}
+
+td {
+    width: 30px;
+    height: 30px;
+    background-color: #FFFFFF;
+    /* ... other existing styles ... */
+}
+
+.wall {
+    background-color: #aaa;
+}
+
+.enemy {
+    background-color: #f00;
+}
+
+.npc {
+    background-color: #0f0;
+}
+
+.chest {
+    background-color: #ff0;
+}
+
+.transition {
+    background-color: rgb(240, 80, 255);
+}
