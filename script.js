@@ -97,27 +97,27 @@ function exportToJson() {
                 let enemyId = cell.dataset.enemyId;
                 let isBlocked = cell.dataset.blocked === 'true';
                 // Adjust how you incorporate this info into your data as needed
-                specialTiles.push(["battle-" + enemyId, isBlocked, i , j]);
+                specialTiles.push(["battle-" + enemyId, isBlocked, j , i]);
                 tileType = "empty";
             }
             if (tileType === 'transition') {
                 let destination = cell.dataset.destination;
                 let destinationX = cell.dataset.destinationX;
                 let destinationY = cell.dataset.destinationY;
-                transitionTiles.push([destination, i , j, parseInt(destinationX), parseInt(destinationY)]);
+                transitionTiles.push([destination, j , i, parseInt(destinationX), parseInt(destinationY)]);
                 tileType = "empty";
             
             }
             if (tileType === 'chest') {
                 let chestId = cell.dataset.chestId;
                 let isBlocked = cell.dataset.blocked === 'true';
-                specialTiles.push(["chest-" + chestId, isBlocked, i , j]);
+                specialTiles.push(["chest-" + chestId, isBlocked, j , i]);
                 tileType = "empty";
             }
             if (tileType === 'npc') {
                 let npcId = cell.dataset.npcId;
                 let isBlocked = cell.dataset.blocked === 'true';
-                specialTiles.push(["npc-" + npcId, isBlocked, i , j]);
+                specialTiles.push(["npc-" + npcId, isBlocked, j , i]);
                 tileType = "empty";
             }
                 
