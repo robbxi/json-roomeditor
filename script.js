@@ -1,6 +1,6 @@
-function setTile(i, j) {
+function setTile(i, j, newType) {
     let cell = document.getElementById(`cell_${i}_${j}`);
-    let tileType = document.getElementById('tileType').value;
+    let tileType = document.getElementById('tileType').value || newType;
     cell.dataset.type = tileType;
 
     if (tileType === 'enemy') {
@@ -19,13 +19,13 @@ function setTile(i, j) {
     }
     if (tileType === 'chest') {
         let chestId = document.getElementById('chestId').value;
-        let isBlocked = document.getElementById('blocked').checked;
+        let isBlocked = document.getElementById('blockedChest').checked;
         cell.dataset.chestId = chestId;
         cell.dataset.blocked = isBlocked;
     }
     if (tileType === 'npc') {
         let npcId = document.getElementById('npcId').value;
-        let isBlocked = document.getElementById('blocked').checked;
+        let isBlocked = document.getElementById('blockedNPC').checked;
         cell.dataset.npcId = npcId;
         cell.dataset.blocked = isBlocked;
     }
@@ -38,7 +38,34 @@ function setTile(i, j) {
     cell.classList.add(tileType);
     cell.dataset.type = tileType; // store the type as a data attribute
 }
-
+function importString(string) {
+    const str = string.toString();
+    const chars = str.match(/\D+/g) || [];
+    const numbers = str.match(/\d+/g).map(Number) || [];
+    let position = 0;
+    let x = -1;
+    let y = -1;
+    chars.forEach((char, i) => {
+        const count = numbers[i] || 1;
+        const type = ( char == 'w' ? 'wall' : 'empty');
+        if(type == 'empty'){
+            position += count;
+            x = (position % 20) - 1;
+            y = Math.floor(position / 20);
+            return;
+        }
+        for (let j = 0; j < count; j++) {
+            if (position % 20 === 0) {
+                x = 0;
+                y = (y < 11 ? y + 1 : y);
+            } else {
+                x++;
+            }
+            setTile(y, x, type);
+            position++;
+        }
+    });
+}
 function showEnemyOptions() {
     let tileType = document.getElementById('tileType').value;
     let enemyOptionsDiv = document.getElementById('enemyOptions');
@@ -91,34 +118,34 @@ function exportToJson() {
     for (let i = 0; i < 12; i++) {
         for (let j = 0; j < 20; j++) {
             let cell = document.getElementById(`cell_${i}_${j}`);
-            let tileType = cell.dataset.type || "empty";
+            let tileType = cell.dataset.type || 'empty';
             
             if (tileType === 'enemy') {
                 let enemyId = cell.dataset.enemyId;
                 let isBlocked = cell.dataset.blocked === 'true';
                 // Adjust how you incorporate this info into your data as needed
                 specialTiles.push(["battle-" + enemyId, isBlocked, j , i]);
-                tileType = "empty";
+                tileType = 'empty';
             }
             if (tileType === 'transition') {
                 let destination = cell.dataset.destination;
                 let destinationX = cell.dataset.destinationX;
                 let destinationY = cell.dataset.destinationY;
                 transitionTiles.push([destination, j , i, parseInt(destinationX), parseInt(destinationY)]);
-                tileType = "empty";
+                tileType = 'empty';
             
             }
             if (tileType === 'chest') {
                 let chestId = cell.dataset.chestId;
-                let isBlocked = cell.dataset.blocked === 'true';
-                specialTiles.push(["chest-" + chestId, isBlocked, j , i]);
-                tileType = "empty";
+                let isBlockedChest = cell.dataset.blocked === 'true';
+                specialTiles.push(["chest-" + chestId, isBlockedChest, j , i]);
+                tileType = 'empty';
             }
             if (tileType === 'npc') {
                 let npcId = cell.dataset.npcId;
                 let isBlocked = cell.dataset.blocked === 'true';
                 specialTiles.push(["npc-" + npcId, isBlocked, j , i]);
-                tileType = "empty";
+                tileType = 'empty';
             }
                 
 
@@ -156,6 +183,111 @@ function exportToJson() {
 
     let jsonString = JSON.stringify(data, null, 3);
     download(jsonString, roomId + '.json', 'application/json');
+}
+
+
+
+
+function clearGrid(){
+    for (let i = 0; i < 12; i++) {
+        for (let j = 0; j < 20; j++) {
+            let cell = document.getElementById(`cell_${i}_${j}`);
+            let tileType = 'empty';
+            cell.dataset.type = tileType;
+
+            // Remove previous classes
+            ["wall", "enemy", "npc", "chest","transition"].forEach(type => {
+                cell.classList.remove(type);
+            });
+        
+            cell.classList.add(tileType);
+            cell.dataset.type = tileType; // store the type as a data attribute
+        }
+    }
+}
+function importJson() {
+    const fileInput = document.getElementById('jsonInput');
+    const file = fileInput.files[0];
+
+    if (file) {
+        const reader = new FileReader();
+        
+        reader.onload = function(event) {
+            try {
+                const jsonData = JSON.parse(event.target.result);
+                let roomInfo = jsonData.roomData.roomInfo;
+                importString(roomInfo.toString());
+                let specialTiles = jsonData.roomData.specialTiles;
+                specialTiles.forEach((tile) => {
+                    let tileX = tile[2];
+                    let tileY = tile[3];
+                    let cell = document.getElementById(`cell_${tileY}_${tileX}`);
+                    let tileType = tile[0].split('-')[0];
+                    
+
+                    if (tileType === 'battle') {
+                        tileType = 'enemy';
+                        let enemyId = tile[0].split('-')[1];
+                        let isBlockedE = tile[2];
+                        cell.dataset.enemyId = enemyId;
+                        cell.dataset.blocked = isBlockedE;
+                    }
+
+                    cell.dataset.type = tileType;
+                    if (tileType === 'chest') {
+                        let chestId = tile[0].split('-')[1];
+                        let isBlockedChest = tile[2];
+                        cell.dataset.chestId = chestId;
+                        cell.dataset.blocked = isBlockedChest;
+                    }
+                    if (tileType === 'npc') {
+                        let npcId = tile[0].split('-')[1];
+                        let isBlockedN = tile[2];;
+                        cell.dataset.npcId = npcId;
+                        cell.dataset.blocked = isBlockedN;
+                    }
+
+                    // Remove previous classes
+                    ["wall", "enemy", "npc", "chest","transition"].forEach(type => {
+                        cell.classList.remove(type);
+                    });
+
+                    cell.classList.add(tileType);
+                    cell.dataset.type = tileType;
+                });
+                let transitionTiles = jsonData.roomData.transitionTiles;
+                transitionTiles.forEach((tile) => {
+                    let cell = document.getElementById(`cell_${tile[2]}_${tile[1]}`);
+                    let tileType = 'transition';
+                    cell.dataset.type = tileType;
+            
+                    let destination = tile[0];
+                    let destinationX = tile[3];
+                    let destinationY = tile[4];
+                    cell.dataset.destination = destination;
+                    cell.dataset.destinationX = destinationX;
+                    cell.dataset.destinationY = destinationY;
+          
+                
+                    // Remove previous classes
+                    ["wall", "enemy", "npc", "chest","transition"].forEach(type => {
+                        cell.classList.remove(type);
+                    });
+                
+                    cell.classList.add(tileType);
+                    cell.dataset.type = tileType; // store the type as a data attribute
+                });
+                console.log(jsonData);
+            } catch (error) {
+                alert('Error parsing JSON: ' + error.message);
+                console.log(error);
+            }
+        };
+
+        reader.readAsText(file);
+    } else {
+        alert('Please select a JSON file.');
+    }
 }
 
 function download(content, fileName, contentType) {
